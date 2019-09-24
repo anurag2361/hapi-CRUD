@@ -11,9 +11,11 @@ const Joi = __importStar(require("joi"));
 exports.createUser = Joi.object().keys({
     name: Joi.string().required(),
     city: Joi.string().required(),
+    password: Joi.string().required(),
 });
 exports.updateUser = Joi.object().keys({
     name: Joi.string().optional(),
+    password: Joi.string().required(),
     city: Joi.string().optional(),
 });
 //# sourceMappingURL=validator.js.map
