@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es6",
+            "dom",
+            "es2017"
+        ],
+        "target": "ES6",
+        "module": "commonjs",
+        "removeComments": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "outDir": "./dist",
+        "skipLibCheck": true
+    },
+    "filesGlob": [
+        "./src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
