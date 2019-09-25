@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const validator_1 = require("./../controllers/validator");
 const User_1 = __importDefault(require("./../models/User"));
 exports.crudRoute = [
@@ -35,7 +36,7 @@ exports.crudRoute = [
                 "hapi-swagger": {
                     responses: {
                         200: {
-                            description: "User found.",
+                            description: "User created.",
                         },
                         401: {
                             description: "Please login.",
@@ -54,6 +55,9 @@ exports.crudRoute = [
         handler: (request, response) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const newUser = new User_1.default(request.payload);
+                const { password } = newUser;
+                const hash = yield bcrypt_1.default.hash(password, 10);
+                newUser.password = hash;
                 const result = yield newUser.save();
                 return response.response(result);
             }
@@ -119,9 +123,20 @@ exports.crudRoute = [
         },
         handler: (request, response) => __awaiter(void 0, void 0, void 0, function* () {
             try {
+                const user = yield User_1.default.findById(request.params.id);
+                const upass = user.password;
                 const update = request.payload;
-                const userupdate = yield User_1.default.findByIdAndUpdate(request.params.id, update, { new: true });
-                return userupdate;
+                const { password } = update;
+                const hpass = yield bcrypt_1.default.compare(password, upass);
+                if (hpass) {
+                    const hash = yield bcrypt_1.default.hash(password, 10);
+                    update.password = hash;
+                    const userupdate = yield user.updateOne(update, { new: true });
+                    return userupdate;
+                }
+                else {
+                    return response.response({ message: "Can't update. Check your password" });
+                }
             }
             catch (error) {
                 throw error;

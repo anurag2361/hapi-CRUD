@@ -1,4 +1,5 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
+import bcrypt from "bcrypt";
 import { createUser, updateUser } from "./../controllers/validator";
 import User from "./../models/User";
 
@@ -23,7 +24,7 @@ export let crudRoute = [
                 "hapi-swagger": {
                     responses: {
                         200: {
-                            description: "User found.",
+                            description: "User created.",
                         },
                         401: {
                             description: "Please login.",
@@ -41,7 +42,10 @@ export let crudRoute = [
         },
         handler: async (request: Request, response: ResponseToolkit) => {
             try {
-                const newUser = new User(request.payload);
+                const newUser: any = new User(request.payload);
+                const { password } = newUser;
+                const hash = await bcrypt.hash(password, 10);
+                newUser.password = hash;
                 const result = await newUser.save();
                 return response.response(result);
             } catch (error) {
@@ -105,9 +109,19 @@ export let crudRoute = [
         },
         handler: async (request: Request, response: ResponseToolkit) => {
             try {
-                const update = request.payload;
-                const userupdate = await User.findByIdAndUpdate(request.params.id, update, { new: true });
-                return userupdate;
+                const user: any = await User.findById(request.params.id);
+                const upass = user.password;
+                const update: any = request.payload;
+                const { password } = update;
+                const hpass = await bcrypt.compare(password, upass);
+                if (hpass) {
+                    const hash = await bcrypt.hash(password, 10);
+                    update.password = hash;
+                    const userupdate = await user.updateOne(update, { new: true });
+                    return userupdate;
+                } else {
+                    return response.response({ message: "Can't update. Check your password" });
+                }
             } catch (error) {
                 throw error;
             }
