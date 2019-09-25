@@ -42,7 +42,7 @@ mongoose_1.default.set("useUnifiedTopology", true);
     });
 })();
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
-    const server = yield new hapi.Server({
+    const server = new hapi.Server({
         port: 3000,
         routes: { cors: { origin: ["*"], headers: ["Accept", "Authorization", "Content-Type", "If-None-Match", "access_token"] } },
     });
@@ -52,7 +52,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             vision_1.default,
             hapi_swagger_1.default,
         ]);
-        yield server.route(index_1.routes);
+        server.route(index_1.routes);
         yield server.start();
         console.info(displayColors ? "\x1b[32m%s\x1b[0m" : "%s", `Server running at ${server.info.uri}`);
     }

@@ -21,7 +21,7 @@ mongoose.set("useUnifiedTopology", true);
 })();
 
 const init = async () => {
-    const server = await new hapi.Server({
+    const server = new hapi.Server({
         port: 3000,
         routes: { cors: { origin: ["*"], headers: ["Accept", "Authorization", "Content-Type", "If-None-Match", "access_token"] } },
     });
@@ -31,7 +31,7 @@ const init = async () => {
             Vision,
             HapiSwagger,
         ]);
-        await server.route(routes);
+        server.route(routes);
         await server.start();
         console.info(displayColors ? "\x1b[32m%s\x1b[0m" : "%s", `Server running at ${server.info.uri}`);
     } catch (error) {
