@@ -24,7 +24,7 @@
     "@hapi/joi": "^16.1.4",
     "@hapi/vision": "^5.5.4",
     "bcrypt": "^3.0.6",
-    "hapi-swagger": "^10.1.2",
+    "hapi-swagger": "^14.5.5",
     "joi": "^14.3.1",
     "mongoose": "^5.7.1"
   }
